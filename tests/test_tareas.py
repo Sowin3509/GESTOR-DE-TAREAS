@@ -3,13 +3,15 @@ from services.gestor_tareas import GestorTareas
 from models.tarea import Tarea
 from exceptions.exceptions import (
     TareaNoEncontradaError, EstadoInvalidoError, IDInvalidoError,
-    DescripcionVaciaError, CategoriaInvalidaError, UsuarioSinTareasError
+    DescripcionVaciaError, CategoriaInvalidaError, UsuarioSinTareasError,UsuarioExistenteError,AutenticacionError,UsuarioNoEncontradoError
 )
+
+from Conexion.ConexionDB import ConexionDB
 
 @pytest.fixture
 def gestor():
-    return GestorTareas()
-
+    db = ConexionDB()
+    return GestorTareas(db)
 
 def test_agregar_tarea_con_descripcion_vacia(gestor):
     with pytest.raises(DescripcionVaciaError):

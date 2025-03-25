@@ -7,12 +7,28 @@ CategoriaInvalidaError,UsuarioSinTareasError,UsuarioExistenteError,Autenticacion
 
 import sqlite3
 
+import sqlite3
+
 class GestorTareas:
-    def __init__(self, db):
-        self.db = db
-        self.tareas = []
     ESTADOS_VALIDOS = ["Pendiente", "En progreso", "Completada"]
 
+    def __init__(self, db_path="gestor_tareas.db"):  # Recibe la ruta como str
+        self.db = sqlite3.connect(db_path, check_same_thread=False)
+        self.cursor = self.db.cursor()
+        self.crear_tablas()
+
+    def crear_tablas(self):
+        """Crea las tablas necesarias en la base de datos si no existen."""
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS tareas (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                usuario TEXT NOT NULL,
+                texto TEXT NOT NULL,
+                categoria TEXT,
+                estado TEXT CHECK(estado IN ('Pendiente', 'En progreso', 'Completada'))
+            )
+        """)
+        self.db.commit()
 
     def registrar_usuario(self, usuario, contrasena):
         """Registra un nuevo usuario en la base de datos."""
